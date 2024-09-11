@@ -307,7 +307,7 @@ If you want buffer hide, return t, or return nil.")
 (defun sort-tab-buffer-need-hide-p (buf)
   (let* ((name (buffer-name buf)))
     (or
-     (cl-some (lambda (prefix) (string-prefix-p prefix name)) '("*" " *" "COMMIT_EDITMSG"))
+     (cl-some (lambda (prefix) (string-prefix-p prefix name)) '("*" " *" "COMMIT_EDITMSG" "tasks.org" "diary.org" "habits.org"))
      (eq (aref name 0) ?\s)
      (sort-tab-is-magit-buffer-p buf)
      (when sort-tab-hide-function
@@ -326,7 +326,7 @@ If you want buffer hide, return t, or return nil.")
     (and
      (sort-tab-buffer-need-hide-p buf)
      (not (window-minibuffer-p))
-     (not (cl-some (lambda (prefix) (string-prefix-p prefix name)) '(" *eldoc" " *snails" "*Help" "*Flycheck" "COMMIT_EDITMSG" " *rime" "*color-rg*")))
+     (not (cl-some (lambda (prefix) (string-prefix-p prefix name)) '(" *eldoc" " *snails" "*Help" "*Flycheck" "COMMIT_EDITMSG" " *rime" "*color-rg*" )))
      (not (string-equal sort-tab-buffer-name name))
      (not (sort-tab-is-magit-buffer-p buf))
      )))
@@ -435,7 +435,7 @@ If you want buffer hide, return t, or return nil.")
    (format " %s%s "
            (if (or (not sort-tab-show-index-number) (not buffer-index) (> buffer-index 8))
                ""
-             (let ((show-numbers '("①" "②" "③" "④" "⑤" "⑥" "⑦" "⑧" "⑨")))
+             (let ((show-numbers '("1" "2" "3" "4" "5" "6" "7" "8" "9")))
                (concat (nth buffer-index show-numbers) " ")))
            (let ((bufname (buffer-name buf))
                  (ellipsis "..."))
