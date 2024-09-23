@@ -306,13 +306,15 @@ If you want buffer hide, return t, or return nil.")
 
 (defun sort-tab-buffer-need-hide-p (buf)
   (let* ((name (buffer-name buf)))
+    (if (string= name "*Org Agenda*")
+        nil
     (or
-     (cl-some (lambda (prefix) (string-prefix-p prefix name)) '("*" " *" "COMMIT_EDITMSG" "tasks.org" "diary.org" "habits.org"))
+     (cl-some (lambda (prefix) (string-prefix-p prefix name)) '("*" " *" "COMMIT_EDITMSG" "tasks.org" "diary.org" "habits.org" "projects.org"))
      (eq (aref name 0) ?\s)
      (sort-tab-is-magit-buffer-p buf)
      (when sort-tab-hide-function
        (funcall sort-tab-hide-function buf))
-     )))
+     ))))
 
 (defun sort-tab-is-normal-buffer-p (current-buffer)
   (and
@@ -326,7 +328,7 @@ If you want buffer hide, return t, or return nil.")
     (and
      (sort-tab-buffer-need-hide-p buf)
      (not (window-minibuffer-p))
-     (not (cl-some (lambda (prefix) (string-prefix-p prefix name)) '(" *eldoc" " *snails" "*Help" "*Flycheck" "COMMIT_EDITMSG" " *rime" "*color-rg*" )))
+     (not (cl-some (lambda (prefix) (string-prefix-p prefix name)) '(" *eldoc" " *snails" "*Help" "*Flycheck" "COMMIT_EDITMSG" " *rime" "*color-rg*")))
      (not (string-equal sort-tab-buffer-name name))
      (not (sort-tab-is-magit-buffer-p buf))
      )))
