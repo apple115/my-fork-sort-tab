@@ -2,8 +2,6 @@
 
 ;; Filename: sort-tab.el
 ;; Description: Provide an out of box configuration to use sort-tab in Emacs.
-;; Author: Andy Stewart <lazycat.manatee@gmail.com>
-;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2021, Andy Stewart, all rights reserved.
 ;; Created: 2021-10-26 22:14:34
 ;; Version: 1.0
@@ -176,6 +174,7 @@ If you want buffer hide, return t, or return nil.")
     (local-set-key (kbd "<drag-mouse-1>") 'push-button))
 
   ;; Add update hook.
+  (add-hook 'tab-bar-select-tab #'sort-tab-update-list)
   (add-hook 'buffer-list-update-hook #'sort-tab-update-list))
 
 (defun sort-tab-create-window ()
@@ -220,6 +219,8 @@ If you want buffer hide, return t, or return nil.")
   (sort-tab-stop-count-freq)
 
   ;; Remove update hook.
+
+  (remove-hook 'tab-bar-select-tab #'sort-tab-update-list)
   (remove-hook 'buffer-list-update-hook #'sort-tab-update-list))
 
 (defun sort-tab-live-p ()
@@ -334,6 +335,7 @@ If you want buffer hide, return t, or return nil.")
      )))
 
 (cl-defmacro sort-tab-update-tabs (&rest body)
+
   `(with-current-buffer (sort-tab-get-buffer)
      ;; Clean buffer.
      (erase-buffer)
@@ -424,7 +426,7 @@ If you want buffer hide, return t, or return nil.")
   ;;   (insert (format "**** %s %s\n"
   ;;                   last-command
   ;;                   (buffer-name current-buffer))))
-
+  (interactive)
   (when sort-tab-render-function
     (funcall sort-tab-render-function (sort-tab-get-visible-buffer-infos)
              (if (minibufferp)
@@ -453,9 +455,17 @@ If you want buffer hide, return t, or return nil.")
        'sort-tab-current-tab-face
      'sort-tab-other-tab-face)))
 
+;; (defun sort-tab-get-buffer-list ()
+;;   (sort (cl-remove-if
+;;          #'sort-tab-buffer-need-hide-p
+;;          (buffer-list))
+;;         #'sort-tab-buffer-freq-higher-p))
+;; 添加tabspcaes-local
 (defun sort-tab-get-buffer-list ()
   (sort (cl-remove-if
-         #'sort-tab-buffer-need-hide-p
+         (lambda (buf)
+           (or (sort-tab-buffer-need-hide-p buf)
+               (not (tabspaces--local-buffer-p buf))))
          (buffer-list))
         #'sort-tab-buffer-freq-higher-p))
 
